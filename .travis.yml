@@ -3,5 +3,5 @@ services:
  - docker
 
 script:
- - docker run -itd nginx -p 8080:8080 bash -- --coverage
+ - docker run -itd -p 8080:8080 nginx bash -- --coverage
 
