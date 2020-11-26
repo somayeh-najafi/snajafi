@@ -1,7 +1,0 @@
-sudo: required
-services: 
- - docker
-
-script:
- - docker run -itd -p 8080:8080 nginx bash -- --coverage
-
