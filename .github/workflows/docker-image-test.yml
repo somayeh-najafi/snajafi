@@ -37,6 +37,6 @@ jobs:
           export SHA_TAG="sha-${GITHUB_SHA::7}"
           export NAMESPACE="qmstr-$SHA_TAG"
           kubectl create namespace $NAMESPACE
-          kustomize edit set namespace testname
+          kustomize edit set namespace $NAMESPACE
           
           
