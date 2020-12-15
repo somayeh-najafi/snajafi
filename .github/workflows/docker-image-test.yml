@@ -33,8 +33,10 @@ jobs:
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER \
           --zone $GKE_ZONE --project $GKE_PROJECT
-          pwd
+          
           cd ./deploy
+          pwd
+          ls
           export SHA_TAG="sha-${GITHUB_SHA::7}"
           export NAMESPACE="qmstr-$SHA_TAG"
           kubectl create namespace $NAMESPACE
