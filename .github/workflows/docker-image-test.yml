@@ -41,6 +41,6 @@ jobs:
           kustomize edit set image endocodeci/qmstr-master:$SHA_TAG
           kustomize edit set image endocodeci/qmstr-client-mvn:$SHA_TAG
           kustomize edit set image endocodeci/pom-patch:$SHA_TAG
-          kubectl apply -K .
+          kubectl apply -k .
           
           
