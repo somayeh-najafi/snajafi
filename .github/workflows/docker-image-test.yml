@@ -38,5 +38,7 @@ jobs:
           export NAMESPACE="qmstr-$SHA_TAG"
           kubectl create namespace $NAMESPACE
           kustomize edit set namespace $NAMESPACE
+          kustomize edit set image smyhus/app
+          kubectl apply -K .
           
           
