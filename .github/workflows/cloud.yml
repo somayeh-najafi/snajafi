@@ -48,4 +48,4 @@ jobs:
         uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
         with:
           version: '270.0.0'
-          service_account_key: ${{ secrets.SA_KEY_DEPLOY_QMSTR_DEV }}       
+          service_account_key: ${{ secrets.SA_KEY}}       
