@@ -33,5 +33,12 @@ jobs:
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER \
           --zone $GKE_ZONE --project $GKE_PROJECT
-          kubectl get namespace
+          cd ./deploy
+          export SHA_TAG="sha-${GITHUB_SHA::7}"
+          export NAMESPACE="qmstr-$SHA_TAG"
+          kubectl create namespace $NAMESPACE
+          kustomize edit set namespace $NAMESPACE
+          kustomize edit set image smyhus/app:$SHA_TAG
+          
+          kubectl apply -k .
           
