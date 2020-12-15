@@ -4,7 +4,7 @@ on: push
 env:
   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
   GKE_CLUSTER: cluster-1
-  GKE_ZONE: us-centralc-1
+  GKE_ZONE: us-central1-c
   GOBUILDER_IMAGE: "golang:1.12-buster"
 
 jobs:
@@ -28,6 +28,7 @@ jobs:
           kustomize-version: "3.2.1"
       - name: Make kustomize executable
         run: chmod +x /opt/hostedtoolcache/kustomize/3.2.1/x64/kustomize
+        
       - name: Deploy to Dev Cluster
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER \
