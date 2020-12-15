@@ -33,10 +33,7 @@ jobs:
         run: |
           gcloud container clusters get-credentials $GKE_CLUSTER \
           --zone $GKE_ZONE --project $GKE_PROJECT
-          
           cd ./deploy
-          pwd
-          ls
           export SHA_TAG="sha-${GITHUB_SHA::7}"
           export NAMESPACE="qmstr-$SHA_TAG"
           kubectl create namespace $NAMESPACE
@@ -44,6 +41,6 @@ jobs:
           kustomize edit set image endocodeci/qmstr-master:$SHA_TAG
           kustomize edit set image endocodeci/qmstr-client-mvn:$SHA_TAG
           kustomize edit set image endocodeci/pom-patch:$SHA_TAG
-          kubectl apply -k .
+          
           
           
