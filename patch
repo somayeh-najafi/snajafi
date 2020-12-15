@@ -1,0 +1,54 @@
+diff --git a/.github/workflows/main.yml b/.github/workflows/main.yml
+index 49c9298..58b0815 100644
+--- a/.github/workflows/main.yml
++++ b/.github/workflows/main.yml
+@@ -3,6 +3,7 @@ on: push
+ 
+ env:
+   GKE_PROJECT: ${{ secrets.GKE_PROJECT }}
++  GKE_SA_KEY: ${{ secrets.SA_KEY_DEPLOY_QMSTR_DEV }}
+   GKE_CLUSTER: qmstr-dev
+   GKE_ZONE: europe-west3-a
+   GOBUILDER_IMAGE: "golang:1.12-buster"
+@@ -125,22 +126,22 @@ jobs:
+     steps:
+       - name: Checkout VCS
+         uses: actions/checkout@master
+-      - name: Setup Google SDK
+-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+-        with:
+-          version: '270.0.0'
+-          service_account_email: ${{ secrets.SA_EMAIL_DEPLOY_QMSTR_DEV }}
+-          service_account_key: ${{ secrets.SA_KEY_DEPLOY_QMSTR_DEV }}
+-      - name: Setup Kustomize
+-        uses: imranismail/setup-kustomize@master
++
++      - id: get-credentials
++        uses: google-github-actions/get-gke-credentials@main
+         with:
+-          kustomize-version: "3.2.1"
+-      - name: Make kustomize executable
+-        run: chmod +x /opt/hostedtoolcache/kustomize/3.2.1/x64/kustomize
+-      - name: Deploy to Dev Cluster
++          cluster_name: $GKE_CLUSTER
++          location: $GKE_ZONE
++          credentials: $GKE_SA_KEY
++
++      # Set up kustomize
++      - name: Set up Kustomize
++        run: |-
++          curl -sfLo kustomize https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
++          chmod u+x ./kustomize
++
++      - name: Deploy to dev cluster
+         run: |
+-          gcloud container clusters get-credentials $GKE_CLUSTER \
+-          --zone $GKE_ZONE --project $GKE_PROJECT
+           cd ./deploy
+           export SHA_TAG="sha-${GITHUB_SHA::7}"
+           export NAMESPACE="qmstr-$SHA_TAG"
+@@ -150,4 +151,3 @@ jobs:
+           kustomize edit set image endocodeci/qmstr-client-mvn:$SHA_TAG
+           kustomize edit set image endocodeci/pom-patch:$SHA_TAG
+           kubectl apply -k .
+-

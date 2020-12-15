@@ -1,0 +1,8 @@
+QMSTR_WRAPPER_BUILDER := qmstr-wrapper
+
+.PHONY: $(QMSTR_WRAPPER_BUILDER)
+$(QMSTR_WRAPPER_BUILDER): $(OUTDIR)builders/$(QMSTR_WRAPPER_BUILDER)
+
+$(OUTDIR)builders/$(QMSTR_WRAPPER_BUILDER): $(GO_SRCS)
+	go test ./modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)

@@ -1,0 +1,12 @@
+<h2>Packages</h2>
+
+<table>
+  <tr>
+    <th>Package</th>
+  </tr>
+  {{ range sort .Page.Sections }}
+  <tr>
+    <td><a href="{{ .URL }}">{{ substr .Params.title 0 20 | upper }}</a></td>
+  </tr>
+  {{ end }}
+</table>

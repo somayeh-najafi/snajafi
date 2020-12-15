@@ -1,0 +1,8 @@
+SCANCODE_ANALYZER := scancode-analyzer
+
+.PHONY: $(SCANCODE_ANALYZER)
+$(SCANCODE_ANALYZER): $(OUTDIR)analyzers/$(SCANCODE_ANALYZER)
+
+$(OUTDIR)analyzers/$(SCANCODE_ANALYZER): $(GO_SRCS)
+	go test ./modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)

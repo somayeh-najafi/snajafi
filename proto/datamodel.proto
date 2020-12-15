@@ -1,0 +1,120 @@
+syntax = "proto3";
+package service;
+option java_package = "org.qmstr.grpc.service";
+
+message FileNode {
+    string uid = 1;
+    string fileNodeType = 2;
+    string path = 4;
+    string name = 5;
+    message FileDataNode {
+        string uid = 1;
+        string fileDataNodeType = 2;
+        string hash = 3;
+        repeated InfoNode additionalInfo = 4;
+        repeated DiagnosticNode diagnosticInfo = 5;
+    }
+    FileDataNode fileData = 6;
+    string timestamp = 7;
+    repeated FileNode derivedFrom = 8;
+    repeated FileNode dependencies = 9;
+}
+
+message InfoNode {
+    string uid = 1;
+    string infoNodeType = 2;
+    string type = 3;
+    double confidenceScore = 4;
+    repeated Analyzer analyzer = 5;
+
+    message DataNode {
+        string uid = 1;
+        string dataNodeType = 2;
+        string type = 3;
+        string data = 4;
+        string timestamp = 5;
+    }
+    repeated DataNode dataNodes = 6;
+    string timestamp = 7;
+}
+
+message DiagnosticNode {
+    string uid = 1;
+    string diagnosticNodeType = 2;
+    enum Severity {
+        UNDEF = 0;
+        INFO = 1;
+        WARNING = 2;
+        ERROR = 3;
+    }
+    Severity severity = 3;
+    string message = 4;
+    repeated Analyzer analyzer = 5;
+    string timestamp = 6;
+}
+
+message Analyzer {
+    string uid = 1;
+    string name = 2;
+    string analyzerNodeType = 3;
+    int64 trustLevel = 4;
+    repeated PathSubstitution pathSub = 5;
+}
+
+message PathSubstitution {
+    string old = 1;
+    string new = 2;
+}
+
+message PackageNode {
+    string uid = 1;
+    string name = 2;
+    string version = 3;
+    string packageNodeType = 4;
+    repeated FileNode targets = 5;
+    repeated InfoNode additionalInfo = 6;
+    string buildConfig = 7;
+    repeated DiagnosticNode diagnosticInfo = 8;
+    string timestamp = 9;
+}
+
+message ProjectNode {
+    string uid = 1;
+    string name = 2;
+    string projectNodeType = 3;
+    repeated PackageNode packages = 4;
+    repeated InfoNode additionalInfo = 5;
+    string timestamp = 6;
+}
+
+message Event {
+    EventClass class = 1;
+    string message = 2;
+}
+
+enum EventClass {
+    ALL = 0;
+    PHASE = 1;
+    MODULE = 2;
+}
+
+message QmstrStateNode {
+    string uid = 1;
+    string qmstrStateNodeType = 2;
+    Phase phase = 3;
+    bool done = 4;
+    string timestamp = 5;
+}
+
+enum Phase {
+    INIT = 0;
+    BUILD = 1;
+    ANALYSIS = 2;
+    REPORT = 3;
+    FAIL = 4;
+}
+
+enum ExceptionType {
+    ERROR = 0;
+    WARNING = 1;
+}

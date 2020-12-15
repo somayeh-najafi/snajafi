@@ -1,0 +1,46 @@
+EMPTY :=
+SPACE := $(EMPTY) $(EMPTY)
+VERSIONS := $(SPACE)$(strip $(shell grep VERSION versions.env))
+DOCKER_BUILD_ARGS = $(subst $(SPACE), --build-arg ,$(VERSIONS))
+
+ifdef http_proxy
+	DOCKER_BUILD_ARGS += --build-arg http_proxy=$(http_proxy)
+endif
+
+ifdef https_proxy
+	DOCKER_BUILD_ARGS += --build-arg https_proxy=$(https_proxy)
+endif
+
+ifdef GOPROXY
+	DOCKER_BUILD_ARGS += --build-arg GOPROXY=$(GOPROXY)
+endif
+
+checkdocker:
+	@echo $(call CHECKCMDS,docker)
+
+# container related
+.PHONY: checkdocker buildercontainer container master devcontainer democontainer ratelimage
+
+buildercontainer: checkdocker masterserver/Dockerfile
+	docker build --no-cache -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target master $(DOCKER_BUILD_ARGS) .
+
+master container: checkdocker masterserver/Dockerfile
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_MASTER} --target master $(DOCKER_BUILD_ARGS) .
+
+devcontainer: checkdocker container
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_DEV} --target dev $(DOCKER_BUILD_ARGS) .
+
+democontainer: checkdocker container
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_RUNTIME} --target runtime $(DOCKER_BUILD_ARGS) .
+	docker build -f masterserver/Dockerfile -t ${CONTAINER_TAG_BUILDER} --target builder $(DOCKER_BUILD_ARGS) .
+
+ratelimage: checkdocker masterserver/Dockerfile
+	docker build -f masterserver/Dockerfile -t qmstr-ratel --target web $(DOCKER_BUILD_ARGS) .
+
+# go related
+.PHONY: qmstr-master
+qmstr-master: $(QMSTR_MASTER)
+
+$(QMSTR_MASTER): $(GO_DEPS)
+	go test ./masterserver/...
+	go build -o $@ masterserver/$(subst $(OUTDIR),,$@).go

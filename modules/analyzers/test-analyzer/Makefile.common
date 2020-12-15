@@ -1,0 +1,8 @@
+TEST_ANALYZER := test-analyzer
+
+.PHONY: $(TEST_ANALYZER)
+$(TEST_ANALYZER): $(OUTDIR)analyzers/$(TEST_ANALYZER)
+
+$(OUTDIR)analyzers/$(TEST_ANALYZER): $(GO_SRCS)
+	go test ./modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)

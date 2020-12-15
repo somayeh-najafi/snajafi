@@ -1,0 +1,8 @@
+SPDX_IDENT_ANALYZER := spdx-identifier-analyzer
+
+.PHONY: $(SPDX_IDENT_ANALYZER)
+$(SPDX_IDENT_ANALYZER): $(OUTDIR)analyzers/$(SPDX_IDENT_ANALYZER)
+
+$(OUTDIR)analyzers/$(SPDX_IDENT_ANALYZER): $(GO_SRCS)
+	go test ./modules/$(subst $(OUTDIR),,$@)
+	go build -o $@ ./modules/$(subst $(OUTDIR),,$@)
