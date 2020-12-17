@@ -8,8 +8,6 @@ env:
   GOBUILDER_IMAGE: "golang:1.12-buster"
 
 jobs:
-
-  
   deploy-to-dev:
     runs-on: ubuntu-latest
 
