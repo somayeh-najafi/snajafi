@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: master
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: master
+          image: marcomicera/broker-test-rabbitmq-master:addr_env
+          imagePullPolicy: Always
+          env:
+            - name: RABBITMQ_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: rabbitmq-address
+                  key: RABBITMQ_ADDRESS
