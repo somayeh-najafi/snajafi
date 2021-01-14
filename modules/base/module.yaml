@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: module
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: module
+          image: marcomicera/broker-test-rabbitmq-module:addr_env
+          imagePullPolicy: Always
+          env:
+            - name: QUEUE_NAME
+              value: "generic"
+            - name: RABBITMQ_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: rabbitmq-address
+                  key: RABBITMQ_ADDRESS
